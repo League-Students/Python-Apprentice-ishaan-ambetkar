@@ -1,100 +1,163 @@
-"""
-# Meet_Tina.py
+import turtle
+import time
+import random
 
-This program draws Tina: a turtle with a hexagon-shaped green shell, four brown legs, a head, and a tail.
+# Game configuration constants
+DELAY = 0.1
+SCORE = 0
+HIGH_SCORE = 0
 
-There are two ways to run this program:
-1. Click the 'Run' (▶) button at the top of your editor window OR in the bottom left corner.
-2. Press the F5 key (in editors like VS Code, Thonny, or GitHub Codespaces).
+# Set up the game screen canvas
+screen = turtle.Screen()
+screen.title("Google Snake Game (Python)")
+screen.bgcolor("#578a34")  # Classic Google Snake green
+screen.setup(width=600, height=600)
+screen.tracer(0)  # Turns off automatic screen updates for smoother rendering
 
-You don't need to understand all of this yet. Later lessons will walk through it piece by piece.
-"""
+# Create the Snake's head
+head = turtle.Turtle()
+head.speed(0)
+head.shape("square")
+head.color("#4a752c")  # Darker green for the head
+head.penup()
+head.goto(0, 0)
+head.direction = "stop"
 
-import turtle                           # Tell Python we want to work with the turtle
-from math import radians, tan
+# Create the Food (Apple)
+food = turtle.Turtle()
+food.speed(0)
+food.shape("circle")
+food.color("#e74c3c")  # Apple red
+food.penup()
+food.goto(0, 100)
 
-turtle.setup(600, 600, 0, 0)            # Set the size of the window
+# List to hold the segments of the snake's body
+segments = []
 
-tina = turtle.Turtle()                  # Create a turtle named tina
+# Scoreboard display setup
+pen = turtle.Turtle()
+pen.speed(0)
+pen.shape("square")
+pen.color("white")
+pen.penup()
+pen.hideturtle()
+pen.goto(0, 260)
+pen.write("Score: 0  High Score: 0", align="center", font=("Arial", 24, "bold"))
 
-tina.speed('fastest')                   # Set the speed of the turtle to fastest
+# Movement validation functions (prevents reversing directly into yourself)
+def go_up():
+    if head.direction != "down":
+        head.direction = "up"
 
-# Draw the hexagon
-tina.penup()                            # Lift the pen up so we can move tina without drawing
-tina.goto(-100, 175)                    # Move tina to the starting position
-tina.pendown()
-tina.begin_fill()
+def go_down():
+    if head.direction != "up":
+        head.direction = "down"
 
-def head_pos(l=200):
-    """ Position of tina's head, relative to the center of the screen"""
-    return (l/2) / tan(radians(30))
+def go_left():
+    if head.direction != "right":
+        head.direction = "left"
 
-def draw_body(t, l=200):
-    """Draw the body of the turtle"""
-    t.pencolor('green')                  # Set the pen color to green
-    t.fillcolor('green')                 # Set the fill color to green
-    t.penup()
-    t.goto(0,0)                          # Move tina to the center of the screen
-    t.setheading(-90)                    # Set the heading of tina to -90 degrees
-    t.forward(head_pos(l))               # Move tina forward by the head position
-    t.right(90)                          # Turn tina right by 90 degrees
-    t.backward( l/2 )                    # Move tina backward by half the length
-    t.pendown()
-    t.begin_fill()
-    for _ in range(6):
-        t.forward(l)                     # Move tina forward by the length
-        t.right(60)                      # Turn tina right by 60 degrees
-    t.end_fill()
+def go_right():
+    if head.direction != "left":
+        head.direction = "right"
 
-def draw_leg(t, a, r=170, w=40, l=50):
-    """Draw A Leg"""
-    t.penup()
-    t.goto(0, 0)                         # Move tina to the center of the screen
-    t.setheading(a)                      # Set the heading of tina to the angle
-    t.forward(r)                         # Move tina forward by the radius
-    t.pendown()
-    t.pencolor('brown')                  # Set the pen color to brown
-    t.fillcolor('brown')                 # Set the fill color to brown
-    t.begin_fill()
-    t.left(90)                           # Turn tina left by 90 degrees
-    t.forward(w/2)                       # Move tina forward by half the width
-    t.right(90)                          # Turn tina right by 90 degrees
-    t.forward(l)                         # Move tina forward by the length
-    t.right(90)                          # Turn tina right by 90 degrees
-    t.forward(w)                         # Move tina forward by the width
-    t.right(90)                          # Turn tina right by 90 degrees
-    t.forward(l)                         # Move tina forward by the length
-    t.right(90)                          # Turn tina right by 90 degrees
-    t.forward(w/2)                       # Move tina forward by half the width
-    t.end_fill()
+# Update position vectors based on current direction
+def move():
+    if head.direction == "up":
+        y = head.ycor()
+        head.sety(y + 20)
 
-def draw_head(t):
-    """Draw a brown head at the head position"""
-    t.penup()
-    t.goto(0, head_pos()-20)             # Move tina to the head position
-    t.pendown()
-    t.pencolor('brown')                  # Set the pen color to brown
-    t.fillcolor('brown')                 # Set the fill color to brown
-    t.begin_fill()
-    t.circle(50)                         # Draw a circle with radius 50
-    t.end_fill()
+    if head.direction == "down":
+        y = head.ycor()
+        head.sety(y - 20)
 
-def say_hello(t):
-    """Make tina say hello, with text to the right of her head"""
-    t.penup()
-    t.goto(75, head_pos()+75)            # Move tina to the position for the text
-    t.pendown()
-    t.write("Hello! I'm Tina!", font=("Arial", 20, "normal"))  # Write the text
+    if head.direction == "left":
+        x = head.xcor()
+        head.setx(x - 20)
 
-draw_head(tina)
+    if head.direction == "right":
+        x = head.xcor()
+        head.setx(x + 20)
 
-for lp in (30, -30, -150, 150):
-    draw_leg(tina, lp)                   # Draw the legs at the specified angles
+# Keyboard input bindings
+screen.listen()
+screen.onkeypress(go_up, "Up")
+screen.onkeypress(go_down, "Down")
+screen.onkeypress(go_left, "Left")
+screen.onkeypress(go_right, "Right")
 
-draw_leg(tina, -90, r=170, w=10, l=50)   # This one is actually a tail!
+# Main Game Loop
+while True:
+    screen.update()
 
-draw_body(tina)                          # Draw the body of the turtle
+    # Check for wall collisions (Out of bounds)
+    if head.xcor() > 290 or head.xcor() < -290 or head.ycor() > 290 or head.ycor() < -290:
+        time.sleep(1)
+        head.goto(0, 0)
+        head.direction = "stop"
 
-say_hello(tina)                          # Make tina say hello
+        # Hide the body segments when resetting
+        for segment in segments:
+            segment.goto(1000, 1000)
+        segments.clear()
 
-turtle.exitonclick()                     # Close the window when we click on it
+        # Reset game session score metrics
+        SCORE = 0
+        pen.clear()
+        pen.write(f"Score: {SCORE}  High Score: {HIGH_SCORE}", align="center", font=("Arial", 24, "bold"))
+
+    # Check for food collision (Snake eats the apple)
+    if head.distance(food) < 20:
+        # Reposition the food to a random grid location
+        x = random.randint(-14, 14) * 20
+        y = random.randint(-14, 14) * 20
+        food.goto(x, y)
+
+        # Grow the snake by appending a new body segment
+        new_segment = turtle.Turtle()
+        new_segment.speed(0)
+        new_segment.shape("square")
+        new_segment.color("#b1c999")  # Lighter green body segment
+        new_segment.penup()
+        segments.append(new_segment)
+
+        # Update scoring values
+        SCORE += 10
+        if SCORE > HIGH_SCORE:
+            HIGH_SCORE = SCORE
+        
+        pen.clear()
+        pen.write(f"Score: {SCORE}  High Score: {HIGH_SCORE}", align="center", font=("Arial", 24, "bold"))
+
+    # Move the end segments first in reverse order to follow the path
+    for index in range(len(segments) - 1, 0, -1):
+        x = segments[index - 1].xcor()
+        y = segments[index - 1].ycor()
+        segments[index].goto(x, y)
+
+    # Move segment 0 to the position where the head was
+    if len(segments) > 0:
+        x = head.xcor()
+        y = head.ycor()
+        segments[0].goto(x, y)
+
+    move()
+
+    # Check for self-collision (Snake runs into its own tail)
+    for segment in segments:
+        if segment.distance(head) < 20:
+            time.sleep(1)
+            head.goto(0, 0)
+            head.direction = "stop"
+            
+            for seg in segments:
+                seg.goto(1000, 1000)
+            segments.clear()
+            
+            SCORE = 0
+            pen.clear()
+            pen.write(f"Score: {SCORE}  High Score: {HIGH_SCORE}", align="center", font=("Arial", 24, "bold"))
+
+    time.sleep(DELAY)
+
+screen.mainloop()
