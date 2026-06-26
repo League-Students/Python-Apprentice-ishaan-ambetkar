@@ -1,108 +1,93 @@
-"""
-# 60_Tic_Tac_Toe.py
+import turtle
+import math
+import random
 
-uid: mNMfKPiT
-name: Tic Tac Toe
-"""
+# Screen setup
+wn = turtle.Screen()
+wn.title("Python Shooting Game")
+wn.bgcolor("lightblue")
+wn.setup(width=600, height=600)
+wn.tracer(0)
 
-#imports
-from guizero import App, Box, PushButton, Text, info
+# Player
+player = turtle.Turtle()
+player.shape("triangle")
+player.color("blue")
+player.penup()
+player.goto(0, -270)
+player.setheading(90)
 
-X_MARK = "X"
-O_MARK = "O"
+# Target
+target = turtle.Turtle()
+target.shape("circle")
+target.color("red")
+target.penup()
+target.goto(random.randint(-280, 280), random.randint(100, 250))
 
-# Implement check_row() and check_win() to allow the game to check if a player has won
-# IMPORTANT! In your code, you should use the constants X_MARK and O_MARK instead of the strings "x" and "o"
+# Bullet
+bullet = turtle.Turtle()
+bullet.shape("circle")
+bullet.color("black")
+bullet.penup()
+bullet.shapesize(0.5, 0.5)
+bullet.hideturtle()
 
-def check_row(l):
-    """Check if a player won on a row
-    Args:
-        l: a 3 element iterable
+# Score
+score = 0
+score_display = turtle.Turtle()
+score_display.hideturtle()
+score_display.penup()
+score_display.goto(-280, 260)
+score_display.write(f"Score: {score}", font=("Courier", 16, "normal"))
 
-    Returns:
-        The winner's token ( X or O ) if there is one, otherwise None
-        """
+# Game state
+bullet_state = "ready" # "ready" to fire, "fire" in motion
 
-    return None
+# Functions
+def aim(x, y):
+    player.setheading(player.towards(x, y))
 
-def check_win(board):
-    """Check if a player has won on a board
-    Args:
-        board: a 3x3 2D array
+def fire():
+    global bullet_state
+    if bullet_state == "ready":
+        bullet_state = "fire"
+        bullet.showturtle()
+        bullet.goto(player.pos())
+        bullet.setheading(player.heading())
 
-    Returns:
-        The winner's token ( X or O ) if there is one, otherwise None
-    """
+def is_collision(t1, t2):
+    distance = math.sqrt((t1.xcor() - t2.xcor())**2 + (t1.ycor() - t2.ycor())**2)
+    return distance < 20
 
-    return None
+# Keyboard and mouse bindings
+wn.listen()
+wn.onscreenclick(aim)
+wn.onkeypress(fire, "space")
 
-# The following code is the main part of the program. It creates a GUI for the
-# game and handles the game logic. Implement the functions above first, then
-# after your program is working you can try changing the code below.
+# Main game loop
+while True:
+    wn.update()
+    
+    # Move bullet
+    if bullet_state == "fire":
+        bullet.forward(20)
+        
+    # Boundary check for bullet
+    if bullet.ycor() > 300 or bullet.ycor() < -300 or bullet.xcor() > 300 or bullet.xcor() < -300:
+        bullet.hideturtle()
+        bullet_state = "ready"
+        
+    # Check for collision with target
+    if is_collision(bullet, target):
+        bullet.hideturtle()
+        bullet_state = "ready"
+        
+        # Reset target
+        target.goto(random.randint(-280, 280), random.randint(100, 250))
+        
+        # Update score
+        score += 10
+        score_display.clear()
+        score_display.write(f"Score: {score}", font=("Courier", 16, "normal"))
 
-class TicTacToe:
-    """A Simple Tic Tac Toe game"""
-
-    def __init__(self, win_func=check_win):
-        self.turn_n = 0
-        self.turn = X_MARK
-        self.board = None  # The storage for user's markers
-
-        self.app = App('Tic Tac Toe Game', bg='burlywood')
-        self.board_pane = Box(self.app, layout='grid')  # Holds UI elements for the board
-        self.message = Text(self.app, text="It's your turn, " + self.current_turn)
-
-        self.reset_button = PushButton(self.app, text='Reset', command=self.reset)
-
-        self.message.text_color = "green"
-
-        self.win_func = win_func
-
-        self.reset()
-
-    def reset(self):
-        """Reset the game state"""
-        self.turn_n = 0
-        self.turn = X_MARK
-        self.message.value = "It's your turn, " + self.current_turn
-
-        self.board   = [[None for _ in range(3)] for _ in range(3)]
-        self.buttons = [[None for _ in range(3)] for _ in range(3)]
-
-        # generate a 3x3 grid
-        for x in range(3):
-            for y in range(3):
-                self.buttons[x][y] = PushButton(self.board_pane, text='', grid=[x, y], width=3, command=self.do_turn, args=[x,y])
-
-    def start(self):
-        """Start the game"""
-        self.app.display()
-
-    @property
-    def current_turn(self):
-        """Return the current player's marker, based on the current turn number"""
-        return [X_MARK, O_MARK][self.turn_n % 2]
-
-    def do_turn(self, x, y):
-        """Handle one player turn, and return a marker if one of the players won"""
-        self.board[x][y] = self.current_turn
-        self.buttons[x][y].text = self.current_turn
-        self.buttons[x][y].disable()
-
-        self.turn_n += 1
-        self.message.value = f"It's your turn, {self.current_turn}"
-
-        winner = self.win_func(self.board)
-
-        if winner:
-            self.message.value = f"Player {winner} won!"
-            info("Tic-tac-toe",f"Player {winner} won!")
-            for row in self.buttons:
-                for button in row:
-                    button.disable()
-        elif self.turn_n == 9:
-            self.message.value = "It's a draw!"
-            info("Tic-tac-toe","It's a draw!")
-
-ttt = TicTacToe(check_win)
-ttt.start()
+turtle.done()
