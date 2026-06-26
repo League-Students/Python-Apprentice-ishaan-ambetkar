@@ -1,11 +1,6 @@
-"""
-League of Amazing Programmers
-Recipe: Turtle Derpy Face (Rounded Paws Up)
-"""
 import turtle
 
 def draw_derpy_face():
-    # Setup canvas
     screen = turtle.Screen()
     screen.setup(width=600, height=600)
     screen.bgcolor("white")
@@ -14,18 +9,15 @@ def draw_derpy_face():
     t.speed(4)
     t.pensize(5)
     
-    # --- DRAW HEAD OUTLINE ---
     t.penup()
     t.goto(0, -100) 
     t.pendown()
-    t.color("black", "#f2f2f2") # Light grey face fill
+    t.color("black", "#f2f2f2")
     t.begin_fill()
     t.circle(120)
     t.end_fill()
     
-    # --- DRAW EYES (•) ---
     t.color("black")
-    # Left Eye
     t.penup()
     t.goto(-35, 20)
     t.pendown()
@@ -33,7 +25,6 @@ def draw_derpy_face():
     t.circle(6)
     t.end_fill()
     
-    # Right Eye
     t.penup()
     t.goto(35, 20)
     t.pendown()
@@ -41,7 +32,6 @@ def draw_derpy_face():
     t.circle(6)
     t.end_fill()
 
-    # --- DRAW NOSE/MOUTH (ᴥ) ---
     t.penup()
     t.goto(-15, 0)
     t.pendown()
