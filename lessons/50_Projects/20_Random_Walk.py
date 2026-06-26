@@ -48,30 +48,27 @@ def draw_derpy_face():
     t.setheading(-60)
     t.circle(15, 120) 
 
-    # --- DRAW ROUNDED PAWS UP ON SIDES ---
-    t.color("black", "#f2f2f2") # Match the head color
-    
-    # Left Rounded Paw
+   
+    t.color("black", "#f2f2f2") 
+   
     t.penup()
-    t.goto(-110, -20) # Start on left edge of head
-    t.setheading(120) # Point up and left
+    t.goto(-110, -20) 
+    t.setheading(120) 
     t.pendown()
     t.begin_fill()
-    t.circle(20, 180) # Arc for the top of the paw
-    t.goto(-115, -45) # Lower part of the paw back to the body
+    t.circle(20, 180) 
+    t.goto(-115, -45) 
     t.end_fill()
     
-    # Right Rounded Paw
     t.penup()
-    t.goto(110, -20) # Start on right edge of head
-    t.setheading(60)  # Point up and right
+    t.goto(110, -20) 
+    t.setheading(60)  
     t.pendown()
     t.begin_fill()
-    t.circle(-20, 180) # Arc for the top of the paw
-    t.goto(115, -45)  # Lower part of the paw back to the body
+    t.circle(-20, 180) 
+    t.goto(115, -45)  
     t.end_fill()
 
-    # Clean up screen
     t.hideturtle()
     screen.mainloop()
 
