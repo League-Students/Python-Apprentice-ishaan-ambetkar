@@ -1,46 +1,28 @@
 """
 League of Amazing Programmers
-Recipe: Drawing Derpy Cheeks Face with Turtle
+Recipe: Turtle Derpy Face (Rounded Paws Up)
 """
 import turtle
 
 def draw_derpy_face():
-    # Setup screen and turtle pen
+    # Setup canvas
     screen = turtle.Screen()
     screen.setup(width=600, height=600)
     screen.bgcolor("white")
     
     t = turtle.Turtle()
-    t.speed(3)  # Moderate speed so you can watch it draw
+    t.speed(4)
     t.pensize(5)
     
-    # --- DRAW HEAD (The ʕ ʔ body outline) ---
+    # --- DRAW HEAD OUTLINE ---
     t.penup()
-    t.goto(0, -100) # Center bottom of the face
+    t.goto(0, -100) 
     t.pendown()
     t.color("black", "#f2f2f2") # Light grey face fill
     t.begin_fill()
     t.circle(120)
     t.end_fill()
     
-    # --- DRAW BLUSHING CHEEKS (•ᴥ•) ---
-    # Left Pink Cheek
-    t.penup()
-    t.goto(-65, -10)
-    t.pendown()
-    t.color("#ff9999") # Soft pink color
-    t.begin_fill()
-    t.circle(20)
-    t.end_fill()
-    
-    # Right Pink Cheek
-    t.penup()
-    t.goto(65, -10)
-    t.pendown()
-    t.begin_fill()
-    t.circle(20)
-    t.end_fill()
-
     # --- DRAW EYES (•) ---
     t.color("black")
     # Left Eye
@@ -64,24 +46,32 @@ def draw_derpy_face():
     t.goto(-15, 0)
     t.pendown()
     t.setheading(-60)
-    t.circle(15, 120) # Center mouth curve
-    
-    # --- DRAW HANDS (っ っ) ---
-    # Left Hugging Hand
-    t.penup()
-    t.goto(-100, -60)
-    t.setheading(160)
-    t.pendown()
-    t.circle(25, 180)
-    
-    # Right Hugging Hand
-    t.penup()
-    t.goto(60, -60)
-    t.setheading(200)
-    t.pendown()
-    t.circle(-25, 180)
+    t.circle(15, 120) 
 
-    # Hide turtle pen and keep window open
+    # --- DRAW ROUNDED PAWS UP ON SIDES ---
+    t.color("black", "#f2f2f2") # Match the head color
+    
+    # Left Rounded Paw
+    t.penup()
+    t.goto(-110, -20) # Start on left edge of head
+    t.setheading(120) # Point up and left
+    t.pendown()
+    t.begin_fill()
+    t.circle(20, 180) # Arc for the top of the paw
+    t.goto(-115, -45) # Lower part of the paw back to the body
+    t.end_fill()
+    
+    # Right Rounded Paw
+    t.penup()
+    t.goto(110, -20) # Start on right edge of head
+    t.setheading(60)  # Point up and right
+    t.pendown()
+    t.begin_fill()
+    t.circle(-20, 180) # Arc for the top of the paw
+    t.goto(115, -45)  # Lower part of the paw back to the body
+    t.end_fill()
+
+    # Clean up screen
     t.hideturtle()
     screen.mainloop()
 
